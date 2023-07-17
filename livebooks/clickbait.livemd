@@ -1,0 +1,107 @@
+# Clickbait classification
+
+```elixir
+Mix.install([
+  {:znn, path: Path.expand("..", __DIR__), force: true},
+  {:csv, "~> 3.0"},
+  {:tim, "~> 0.1.0"}
+])
+```
+
+## Prelude
+
+```elixir
+require Tim
+```
+
+## Load the data
+
+The data is stored in the compressed file `clickbait.csv.gz`. The CSV has the format:
+
+```
+label,text
+clickbait,Here's What Happened When One Dude Tried Six Different Women's Hairstyles
+clickbait,"How Well Do You Remember ""30 Rock"""
+non_clickbait,CBS Corporation begins trading on New York Stock Exchange
+```
+
+This data is loaded in a list of tuples of the form `[{label, text}, ...]`.
+
+No preprocessing is applied to the text.
+
+```elixir
+data =
+  "clickbait.csv.gz"
+  |> Path.expand(__DIR__)
+  |> File.stream!([:compressed])
+  |> CSV.decode!(headers: true)
+  |> Stream.map(fn %{"label" => l, "text" => t} -> %{label: l, text: t} end)
+  |> Enum.to_list()
+
+IO.puts("Size of data set: #{length(data)}.\n")
+
+IO.puts("Label counts:")
+
+for {l, c} <- Enum.frequencies_by(data, fn %{label: l} -> l end) do
+  IO.puts("#{l} -- #{c}")
+end
+```
+
+## Prediction examples
+
+For a small set of test cases, compute the predicted label and display it along with the text and reported label. Make sure the exclude the test data from the training set.
+
+```elixir
+test_set = data |> Enum.take(10)
+training_set = data |> Enum.drop(10) |> Enum.take(10_000)
+
+predict_fn = &Znn.predict(&1, training_set)
+
+for %{label: label, text: text} <- test_set do
+  predicted_label = predict_fn.(text)
+  IO.puts("           text: #{text}")
+  IO.puts("          label: #{label}")
+  IO.puts("predicted label: #{predicted_label}\n")
+end
+```
+
+## Accuracy
+
+First, split the data into a training set and test set. Check that the label proportions are roughly balanced in the two sets.
+
+```elixir
+{training_set, test_set} =
+  Znn.Evaluate.init(
+    data,
+    limit_count: 3_000,
+    training_fraction: 0.9
+  )
+
+IO.puts("Training set size: #{length(training_set)}.")
+IO.puts("Test set size: #{length(test_set)}.\n")
+
+IO.puts("Training label counts:")
+
+for {l, c} <- Enum.frequencies_by(training_set, fn %{label: l} -> l end) do
+  IO.puts("#{l} -- #{c}")
+end
+
+IO.puts("\nTest label counts:")
+
+for {l, c} <- Enum.frequencies_by(test_set, fn %{label: l} -> l end) do
+  IO.puts("#{l} -- #{c}")
+end
+```
+
+Compute the accuracy and time the run.
+
+```elixir
+predict_fn = &Znn.predict(&1, training_set, parallel_chunk_size: 100)
+
+%{mean: time, result: accuracy} =
+  Znn.Evaluate.accuracy(test_set, predict_fn)
+  |> Tim.time()
+
+IO.puts("Runtime: #{Float.round(time / 1.0e6, 1)} sec")
+IO.puts("Accuracy: #{Float.round(accuracy * 100, 1)}%")
+```
