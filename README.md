@@ -25,3 +25,6 @@ To predict the label of a new piece of text, call the `predict` function:
 "clickbait"
 ```
 
+## Examples
+
+See the included Livebooks for applications of `Znn` to public data sets.

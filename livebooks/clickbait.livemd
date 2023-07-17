@@ -73,7 +73,7 @@ First, split the data into a training set and test set. Check that the label pro
 {training_set, test_set} =
   Znn.Evaluate.init(
     data,
-    limit_count: 3_000,
+    limit_count: 10_000,
     training_fraction: 0.9
   )
 
