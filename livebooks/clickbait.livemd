@@ -16,7 +16,7 @@ require Tim
 
 ## Load the data
 
-The data is stored in the compressed file `clickbait.csv.gz`. The CSV has the format:
+This example uses a data set adapted from [here](https://github.com/bhargaviparanjape/clickbait/tree/master). The data is stored in the compressed file `clickbait.csv.gz`. The CSV has the format:
 
 ```
 label,text
