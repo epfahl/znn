@@ -32,5 +32,5 @@ See the included Livebooks in `/livebooks` for applications of `Znn` to public d
 ## Todo
 
 - [ ] Precompute the compression sizes and store them with the label and text. One-the-fly compression is a significant fraction of the prediction run time.
-- [ ] Allow other other compression algorithms to be used, including no compression (identity function).
+- [ ] Allow other compression algorithms to be used, including no compression (identity function).
 - [ ] Adaptively compute parallel chunk size through warm-up runs.
