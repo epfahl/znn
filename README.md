@@ -27,4 +27,10 @@ To predict the label of a new piece of text, call the `predict` function:
 
 ## Examples
 
-See the included Livebooks for applications of `Znn` to public data sets.
+See the included Livebooks in `/livebooks` for applications of `Znn` to public data sets.
+
+## Todo
+
+- [ ] Precompute the compression sizes and store them with the label and text. One-the-fly compression is a significant fraction of the prediction run time.
+- [ ] Allow other other compression algorithms to be used, including no compression (identity function).
+- [ ] Adaptively compute parallel chunk size through warm-up runs.
