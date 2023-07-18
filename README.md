@@ -34,3 +34,4 @@ See the included Livebooks in `/livebooks` for applications of `Znn` to public d
 - [ ] Precompute the compression sizes and store them with the label and text. One-the-fly compression is a significant fraction of the prediction run time.
 - [ ] Allow other compression algorithms to be used, including no compression (identity function).
 - [ ] Adaptively compute parallel chunk size through warm-up runs.
+- [ ] Add multi-topic classification: handle a list of labels and include an appropriate voting scheme.
